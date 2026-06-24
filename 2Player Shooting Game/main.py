@@ -25,16 +25,30 @@ class Player(pygame.sprite.Sprite):
         self.img = pygame.image.load(img_path)
         #scaling the image
         self.img = pygame.transform.scale(self.img,(40,50))
-        self.rect = self.img.get_rect(topleft=(x,y))
+        self.rect = self.img.get_rect(topleft=(x,y))# the top left corner of the hitbox rectangle that is around the image is being placed at the xy coordinates
         self.controls = controls
         self.side = side
         self.hp = 10
         self.bullets = pygame.sprite.Group()
     
     def move(self,keys):
-        pass
+        if keys[self.controls["left"]]:
+            self.rect.x -= PLAYER_SPEED
+        if keys[self.controls["right"]]:
+            self.rect.x += PLAYER_SPEED
+        if keys[self.controls["up"]]:
+            self.rect.y -= PLAYER_SPEED
+        if keys[self.controls["down"]]: 
+            self.rect.y += PLAYER_SPEED
+        
+        #top and bottom boundaries
+        self.rect.top = max(0,self.rect.top)
+        self.rect.bottom = min(HEIGHT,self.rect.bottom)
 
-
+        if self.side == "left":
+            self.rect.left = max(0,self.rect.left)
+            self.rect.right = min(DIVIDER.left,self.rect.right)
+        
 
 
 
