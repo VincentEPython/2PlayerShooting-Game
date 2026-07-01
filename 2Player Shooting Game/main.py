@@ -22,10 +22,10 @@ win_lose_font = pygame.font.SysFont("Times New Roman",30)
 class Player(pygame.sprite.Sprite):
     def __init__(self,x,y,img_path,controls,side):
         super().__init__() # super is a function that's calling the constructor function of the parent class (Sprite)
-        self.img = pygame.image.load(img_path)
+        self.image = pygame.image.load(img_path)
         #scaling the image
-        self.img = pygame.transform.scale(self.img,(40,50))
-        self.rect = self.img.get_rect(topleft=(x,y))# the top left corner of the hitbox rectangle that is around the image is being placed at the xy coordinates
+        self.image = pygame.transform.scale(self.image,(40,50))
+        self.rect = self.image.get_rect(topleft=(x,y))# the top left corner of the hitbox rectangle that is around the image is being placed at the xy coordinates
         self.controls = controls
         self.side = side
         self.hp = 10
@@ -44,20 +44,48 @@ class Player(pygame.sprite.Sprite):
         #top and bottom boundaries
         self.rect.top = max(0,self.rect.top)
         self.rect.bottom = min(HEIGHT,self.rect.bottom)
-
+        #left and right boundaries
         if self.side == "left":
             self.rect.left = max(0,self.rect.left)
             self.rect.right = min(DIVIDER.left,self.rect.right)
-        
+        if self.side == "right":
+            self.rect.left = max(DIVIDER.right,self.rect.left)
+            self.rect.right = max(WIDTH,self.rect.right)
+    
+#creating Playerobject
+playerL = Player(
+    100,250,
+    "images\homelander idle.png",
+    {
+        "left" : pygame.K_a,
+        "right" : pygame.K_d,
+        "up" : pygame.K_w,
+        "down" : pygame.K_s
+    },
+    "left" 
+)
 
-
-
+#creating player group
+players = pygame.sprite.Group()
+#adding players to the group
+players.add(playerL)
 
 def draw():
     screen.fill("navy blue")
     #displaying the Divider
     pygame.draw.rect(screen,"white",DIVIDER)
 
+    # displaying players sprite
+    players.draw(screen)
+
+    #combining player hp with the hp_font
+    left_hp_text = hp_font.render(f"Health: {playerL.hp}",True,(200,150,115))
+    right_hp_text = hp_font.reder(f"Health: {playerL.hp}",True,(200,150,115))
+
+    #displaying the hp text
+    screen.blit(left_hp_text,(20,40))
+
+    # constantly updating the screen
     pygame.display.update()
 
 def main():
