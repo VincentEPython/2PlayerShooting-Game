@@ -24,14 +24,14 @@ class Player(pygame.sprite.Sprite):
         super().__init__() # super is a function that's calling the constructor function of the parent class (Sprite)
         self.image = pygame.image.load(img_path)
         #scaling the image
-        self.image = pygame.transform.scale(self.image,(40,50))
+        self.image = pygame.transform.scale(self.image,(70,80))
         self.rect = self.image.get_rect(topleft=(x,y))# the top left corner of the hitbox rectangle that is around the image is being placed at the xy coordinates
         self.controls = controls
         self.side = side
         self.hp = 10
         self.bullets = pygame.sprite.Group()
     
-    def move(self,keys):
+    def move(self,keys):    
         if keys[self.controls["left"]]:
             self.rect.x -= PLAYER_SPEED
         if keys[self.controls["right"]]:
@@ -50,12 +50,12 @@ class Player(pygame.sprite.Sprite):
             self.rect.right = min(DIVIDER.left,self.rect.right)
         if self.side == "right":
             self.rect.left = max(DIVIDER.right,self.rect.left)
-            self.rect.right = max(WIDTH,self.rect.right)
+            self.rect.right = min(WIDTH,self.rect.right)
     
 #creating Playerobject
 playerL = Player(
     100,250,
-    "images\homelander idle.png",
+    "images\homelander_idle.png",
     {
         "left" : pygame.K_a,
         "right" : pygame.K_d,
@@ -64,11 +64,22 @@ playerL = Player(
     },
     "left" 
 )
-
+playerR = Player(
+    900,250,
+    "images\souljaboy.jpg",
+    {
+        "left" : pygame.K_LEFT,
+        "right" : pygame.K_RIGHT,
+        "up" : pygame.K_UP,
+        "down" : pygame.K_DOWN
+    },
+    "right"
+)
 #creating player group
 players = pygame.sprite.Group()
 #adding players to the group
 players.add(playerL)
+players.add(playerR)
 
 def draw():
     screen.fill("navy blue")
@@ -80,11 +91,11 @@ def draw():
 
     #combining player hp with the hp_font
     left_hp_text = hp_font.render(f"Health: {playerL.hp}",True,(200,150,115))
-    right_hp_text = hp_font.reder(f"Health: {playerL.hp}",True,(200,150,115))
+    right_hp_text = hp_font.render(f"Health: {playerR.hp}",True,(200,150,115))
 
     #displaying the hp text
     screen.blit(left_hp_text,(20,40))
-
+    screen.blit(right_hp_text,(850,40))
     # constantly updating the screen
     pygame.display.update()
 
@@ -96,6 +107,11 @@ def main():
                 running = False
                 pygame.quit()
                 exit(0)
+
+        #getting the keyboardkeys pressed
+        keys = pygame.key.get_pressed()
+        playerL.move(keys)
+        playerR.move(keys)
         draw()
 
 
