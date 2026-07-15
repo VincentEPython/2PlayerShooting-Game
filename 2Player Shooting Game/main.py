@@ -51,6 +51,35 @@ class Player(pygame.sprite.Sprite):
         if self.side == "right":
             self.rect.left = max(DIVIDER.right,self.rect.left)
             self.rect.right = min(WIDTH,self.rect.right)
+    def shoot(self):
+        if len(self.bullets) >= MAX_BULLET:
+            return
+        if self.side == "left":
+            bullet = Bullet(
+                self.rect.right,
+                self.rect.century,
+                1
+            )
+        else:
+            bullet = Bullet(
+                self.rect.left,
+                self.rect.century,
+                -1
+            )
+        self.bullets.add(bullet)
+
+#creating Bullet class
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self,x,y,direction):
+        super().__init__()
+        self.image = pygame.image.load("images\laser.png")
+        self.rect = self.image.get_rect(topleft=(x,y))
+        self.direction = direction
+    def update(self):
+        self.rect.x = self.rect.x + BULLET_SPEED * self.direction
+        # killing the bullet after going out of the screen
+        if self.rect.right < 0 or self.rect.left > WIDTH:
+            self.kill()
     
 #creating Playerobject
 playerL = Player(
@@ -88,6 +117,10 @@ def draw():
 
     # displaying players sprite
     players.draw(screen)
+    
+    #drawing bullets
+    playerL.bullets.draw(screen)
+    playerR.bullets.draw(screen)
 
     #combining player hp with the hp_font
     left_hp_text = hp_font.render(f"Health: {playerL.hp}",True,(200,150,115))
