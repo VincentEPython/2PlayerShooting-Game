@@ -51,6 +51,7 @@ class Player(pygame.sprite.Sprite):
         if self.side == "right":
             self.rect.left = max(DIVIDER.right,self.rect.left)
             self.rect.right = min(WIDTH,self.rect.right)
+
     def shoot(self):
         if len(self.bullets) >= MAX_BULLET:
             return
@@ -67,6 +68,9 @@ class Player(pygame.sprite.Sprite):
                 -1
             )
         self.bullets.add(bullet)
+
+    def update(self):
+        self.bullets.update()
 
 #creating Bullet class
 class Bullet(pygame.sprite.Sprite):
@@ -132,6 +136,13 @@ def draw():
     # constantly updating the screen
     pygame.display.update()
 
+def show_winner(message):
+    screen.fill((255,255,255))
+    win_text = win_lose_font.render(message,True,(0,0,0))
+    screen.blit(win_text,(WIDTH // 2,HEIGHT // 2))
+    
+
+
 def main():
     running = True
     while running:
@@ -140,11 +151,23 @@ def main():
                 running = False
                 pygame.quit()
                 exit(0)
-
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LCTRL:
+                    playerL.shoot()
+                if event.key == pygame.K_RCTRL:
+                    playerR.shoot()
         #getting the keyboardkeys pressed
         keys = pygame.key.get_pressed()
         playerL.move(keys)
         playerR.move(keys)
+        players.update()
+
+        # checking the health
+        if playerL.hp <= 0:
+            show_winner("souljaboy wins!!")
+        if playerR.hp <= 0:
+            show_winner("homelander wins!!")
+        
         draw()
 
 
